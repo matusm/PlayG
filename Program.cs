@@ -10,36 +10,49 @@ namespace PlayG
     {
         static void Main(string[] args)
         {
-            //double sm = 1.2217;
-            //double sm = 5.4911;
-            double sm = 1.00001;
+            // convert double to mantissa and exponent
+            double s = 05.4911E-10;
+            //double s = 1.00001E-10;
 
+            double exp = Math.Floor(Math.Log10(Math.Abs(s)));
+            double sm = s / Math.Pow(10, exp);
+            int sExp = (int)exp;
 
-            double x1 = 65535 / (sm * 0.999985);
-            int x1i = (int)Math.Round(x1);
-
-            byte[] bytes = BitConverter.GetBytes(x1i);
-            if (!BitConverter.IsLittleEndian)
-                Array.Reverse(bytes);
-
-            Console.WriteLine(sm);
-            Console.WriteLine(x1);
-            Console.WriteLine(x1i);
+            Console.WriteLine($"{s}  ->  mantissa: {sm}  exponent: {sExp}");
             Console.WriteLine();
 
-            foreach (var b in bytes)
+
+            // convert the mantissa of a calibration factor
+            double normalizedSm = 65535 / (sm * 0.999985);
+            int integerNormalizedSm = (int)Math.Round(normalizedSm);
+
+            byte[] bytesSm = BitConverter.GetBytes(integerNormalizedSm);
+            if (!BitConverter.IsLittleEndian)
+                Array.Reverse(bytesSm);
+
+            Console.WriteLine(sm);
+            Console.WriteLine(normalizedSm);
+            Console.WriteLine(integerNormalizedSm);
+            Console.WriteLine();
+
+            foreach (var b in bytesSm)
             {
                 Console.WriteLine($"{b:X2}");
             }
-
             Console.WriteLine();
 
+
+            // convert a serial number
             int serialNumber = 52365;
-            byte[] bytes1 = BitConverter.GetBytes(serialNumber);
+            byte[] bytesSN = BitConverter.GetBytes(serialNumber);
             if (!BitConverter.IsLittleEndian)
-                Array.Reverse(bytes);
-            Console.WriteLine($"{bytes1[0]:X2}");
-            Console.WriteLine($"{bytes1[1]:X2}");
+                Array.Reverse(bytesSN);
+            Console.WriteLine($"{serialNumber}");
+            foreach (var b in bytesSN)
+            {
+                Console.WriteLine($"{b:X2}");
+            }
+            Console.WriteLine();
 
         }
     }
